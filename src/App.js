@@ -10,18 +10,22 @@ function App() {
 
   const [searchValue, setSearchValue] = useState('');
 
-  const getMovieRequest = async () => {
-    const url = "http://www.omdbapi.com/?s=avengers&apikey=7b34463d";
+  const getMovieRequest = async (searchValue) => {
+    const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=7b34463d`;
     const response = await fetch(url);
     const responseJson = await response.json();
+    // log response
     console.log(responseJson);
-    setMovies(responseJson.Search);
+
+    if (responseJson.Search) {
+      setMovies(responseJson.Search);
+    }
   }
 
   // call the method only when page loads
   useEffect(() => {
-    getMovieRequest();
-  }, []);
+    getMovieRequest(searchValue);
+  }, [searchValue]);
   
   return (
     <div className='container-fluid'>
