@@ -27,7 +27,7 @@ function App() {
     <div className='container-fluid'>
       <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
         <MovieListHeading heading="Movies" />
-        <SearchMovie />
+        <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue} />
       </div>
 
       <div className='d-flex flex-row' style={{  overflowY: 'auto' }}>
