@@ -4,6 +4,7 @@ import './App.css';
 import MovieList from './components/MovieList';
 import MovieListHeading from './components/MovieListHeading';
 import SearchMovie from './components/SearchField';
+import AddFavorite from './components/AddFavorite';
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -35,7 +36,7 @@ function App() {
       </div>
 
       <div className='d-flex flex-row' style={{  overflowY: 'auto' }}>
-        <MovieList movies={movies} />
+        <MovieList movies={movies}  favoriteMovie={AddFavorite} />
       </div>
     </div>
   );
