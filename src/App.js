@@ -15,7 +15,7 @@ function App() {
     const response = await fetch(url);
     const responseJson = await response.json();
     // log response
-    console.log(responseJson);
+    // console.log(responseJson);
 
     if (responseJson.Search) {
       setMovies(responseJson.Search);

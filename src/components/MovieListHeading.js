@@ -1,5 +1,4 @@
 import React from "react";
-import SearchMovie from "./SearchField";
 
 const MovieListHeading = (props) => {
     return <div className="col">
