@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { account } from "./Appwrite";
-import { ID } from "./Appwrite";
+import { account, databases, ID } from "./Appwrite";
+// import { ID } from "./Appwrite";
 
 const Register = () => {
     const [user, setUser] = useState({
@@ -19,17 +19,40 @@ const Register = () => {
     };
 
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     try {
+    //         // Create user with email and password
+    //         const response = await account.create(ID.unique(), user.email, user.password, user.fullName);
+    //         console.log('User registered:', response);
+    //         // Redirect user to login or some other page
+    //     } catch (error) {
+    //         console.error('Registration error:', error);
+    //     }
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Create user with email and password
             const response = await account.create(ID.unique(), user.email, user.password, user.fullName);
-            console.log('User registered:', response);
-            // Redirect user to login or some other page
+            
+            // Add membership details to the database
+            const membershipStart = new Date().toISOString();
+            const membershipEnd = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour later
+    
+            await databases.createDocument('66eab0820029be0edb42', '66eab609001ab4452c78', response.$id, {
+                fullName: user.fullName,
+                email: user.email,
+                membershipStart,
+                membershipEnd,
+            });
+    
+            console.log('User registered with membership');
         } catch (error) {
             console.error('Registration error:', error);
         }
     };
+    
 
 
     return (
