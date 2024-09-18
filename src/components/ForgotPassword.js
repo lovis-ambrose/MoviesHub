@@ -21,21 +21,23 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="forgot-password-container">
-            <h2>Forgot Password</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={handleChange}
-                        required
-                        className="form-control"
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary">Send Recovery Email</button>
-            </form>
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="text-start">
+                <h2>Forgot Password</h2>
+                <form onSubmit={handleSubmit}>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={handleChange}
+                            required
+                            class="form-control text-start"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Send Recovery Email</button>
+                </form>
+            </div>
         </div>
     );
 };

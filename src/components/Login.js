@@ -28,33 +28,35 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
-            <h2>Login to Continue</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={credentials.email}
-                        onChange={handleChange}
-                        required
-                        className="form-control"
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={credentials.password}
-                        onChange={handleChange}
-                        required
-                        className="form-control"
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary">Login</button>
-            </form>
+        <div className="d-flex justify-content-center align-items-center vh-100">
+            <div class="text-start border p-3">
+                <h2>Login to Continue</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group mt-2">
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={credentials.email}
+                            onChange={handleChange}
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="form-group mt-2">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={credentials.password}
+                            onChange={handleChange}
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-primary mt-2">Login</button>
+                </form>
+            </div>
         </div>
     );
 };
