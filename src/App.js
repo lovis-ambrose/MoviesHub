@@ -90,35 +90,35 @@ function App() {
   };
   
   return (
-    // <div className='container-fluid'>
-    //   <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
-    //     <MovieListHeading heading="Movies" />
-    //     <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue} />
-    //   </div>
+    <div className='container-fluid'>
+      <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
+        <MovieListHeading heading="Movies" />
+        <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue} />
+      </div>
 
-    //   <div className='d-flex flex-row' style={{  overflowY: 'auto' }}>
-    //     <MovieList movies={movies} handleFavoritesClick={addFavoriteMovie}  favoriteMovie={AddFavorite} />
-    //   </div>
+      <div className='d-flex flex-row' style={{  overflowY: 'auto' }}>
+        <MovieList movies={movies} handleFavoritesClick={addFavoriteMovie}  favoriteMovie={AddFavorite} />
+      </div>
 
-    //   <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
-    //     <MovieListHeading heading="Favorites" />
-    //   </div>
+      <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
+        <MovieListHeading heading="Favorites" />
+      </div>
 
-    //   <div className='d-flex flex-row' style={{  overflowY: 'auto' }}>
-    //     <MovieList movies={favorites} handleFavoritesClick={removeFavoriteMovie}  favoriteMovie={Removefavorites} />
-    //   </div>
-    // </div>
+      <div className='d-flex flex-row' style={{  overflowY: 'auto' }}>
+        <MovieList movies={favorites} handleFavoritesClick={removeFavoriteMovie}  favoriteMovie={Removefavorites} />
+      </div>
+    </div>
 
-    <Router>
-            <div className="App">
-                <Routes>
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    {/* Other routes can go here */}
-                </Routes>
-            </div>
-        </Router>
+  //   <Router>
+  //     <div className="App">
+  //         <Routes>
+  //             <Route path="/register" element={<Register />} />
+  //             <Route path="/login" element={<Login />} />
+  //             <Route path="/forgot-password" element={<ForgotPassword />} />
+  //             {/* Other routes can go here */}
+  //         </Routes>
+  //     </div>
+  // </Router>
   );
 };
 
