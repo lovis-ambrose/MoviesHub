@@ -6,6 +6,7 @@ import MovieListHeading from './components/MovieListHeading';
 import SearchMovie from './components/SearchField';
 import AddFavorite from './components/AddFavorite';
 import Removefavorites from './components/RemoveFavorite';
+import { databases } from './components/Appwrite';
 
 function App() {
   const [movies, setMovies] = useState([]);
