@@ -17,10 +17,13 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [searchValue, setSearchValue] = useState('');
+  const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
+  const movieCollectionId = process.env.REACT_APP_MOVIE_COLLECTION_ID;
 
   const getMovieRequest = async (searchValue) => {
-    const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=7b34463d`;
-    const response = await fetch(url);
+    const apiUrl = `http://www.omdbapi.com/?s=${searchValue}&apikey=7b34463d`
+
+    const response = await fetch(apiUrl);
     const responseJson = await response.json();
     // log response
     // console.log(responseJson);
@@ -56,7 +59,7 @@ function App() {
 
     // Save the movie to AppWrite database
     try {
-      await databases.createDocument('66eab0820029be0edb42', '66eab10c0029c603f351', 'unique()', {
+      await databases.createDocument(databaseId, movieCollectionId, 'unique()', {
           title: movie.Title,
           year: movie.Year,
           type: movie.Type,
@@ -82,7 +85,7 @@ function App() {
     // Remove movie from AppWrite database
     try {
       const movieDocId = movie.imdbID; // imdbID is unique
-      await databases.deleteDocument('66eab0820029be0edb42', '66eab10c0029c603f351', movieDocId);
+      await databases.deleteDocument(databaseId, movieCollectionId, movieDocId);
       console.log('Movie removed from AppWrite database');
     } catch (error) {
         console.error('Error removing movie from AppWrite database', error);

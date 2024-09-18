@@ -3,6 +3,7 @@ import { account } from './Appwrite';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
+    const resetUrl = process.env.REACT_APP_PASSWORD_RESET_URL;
 
     const handleChange = (e) => {
         setEmail(e.target.value);
@@ -12,7 +13,7 @@ const ForgotPassword = () => {
         e.preventDefault();
         try {
             // Send password recovery email
-            await account.createRecovery(email, 'http://localhost:3000/reset-password');
+            await account.createRecovery(email, resetUrl);
             console.log('Password recovery email sent');
             // Optionally show success message to the user
         } catch (error) {
