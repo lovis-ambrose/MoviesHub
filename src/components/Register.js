@@ -56,44 +56,46 @@ const Register = () => {
 
 
     return (
-        <div className="register-container">
-            <h2>Register new User</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Full Name</label>
-                    <input
-                        type="text"
-                        name="fullName"
-                        value={user.fullName}
-                        onChange={handleChange}
-                        required
-                        className="form-control"
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={user.email}
-                        onChange={handleChange}
-                        required
-                        className="form-control"
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={user.password}
-                        onChange={handleChange}
-                        required
-                        className="form-control"
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary">Register</button>
-            </form>
+        <div className="d-flex justify-content-center align-items-center vh-100">
+            <div class="text-start border rounded p-3 w-25">
+                <h2>Register new User</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="fform-group mt-2">
+                        <label>Full Name</label>
+                        <input
+                            type="text"
+                            name="fullName"
+                            value={user.fullName}
+                            onChange={handleChange}
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="fform-group mt-2">
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={user.email}
+                            onChange={handleChange}
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="fform-group mt-2">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={user.password}
+                            onChange={handleChange}
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-primary mt-2 w-100">Register</button>
+                </form>
+            </div>
         </div>
     );
 };

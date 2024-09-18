@@ -22,7 +22,7 @@ const ForgotPassword = () => {
 
     return (
         <div class="d-flex justify-content-center align-items-center vh-100">
-            <div class="text-start">
+            <div class="text-start border rounded p-3 w-25">
                 <h2>Forgot Password</h2>
                 <form onSubmit={handleSubmit}>
                     <div class="form-group">
@@ -35,10 +35,11 @@ const ForgotPassword = () => {
                             class="form-control text-start"
                         />
                     </div>
-                    <button type="submit" class="btn btn-primary mt-2">Send Recovery Email</button>
+                    <button type="submit" class="btn btn-primary mt-2 w-100">Send Recovery Email</button>
                 </form>
             </div>
         </div>
+
     );
 };
 

@@ -29,7 +29,7 @@ const Login = () => {
 
     return (
         <div className="d-flex justify-content-center align-items-center vh-100">
-            <div class="text-start border p-3">
+            <div class="text-start border rounded p-3 w-25">
                 <h2>Login to Continue</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group mt-2">
@@ -54,7 +54,7 @@ const Login = () => {
                             className="form-control"
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary mt-2">Login</button>
+                    <button type="submit" className="btn btn-primary mt-2 w-100">Login</button>
                 </form>
             </div>
         </div>
