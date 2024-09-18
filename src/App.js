@@ -29,16 +29,33 @@ function App() {
     getMovieRequest(searchValue);
   }, [searchValue]);
 
+  // retrieve movies from local storage when app loads
+  useEffect(() => {
+    const favoriteMovies = JSON.parse(localStorage.getItem('favorite-movie-key'));
+    setFavorites(favoriteMovies);
+  }, []);
+
+
+  const saveMovieToLocalStorage = (items) => {
+    localStorage.setItem('favorite-movie-key', JSON.stringify(items));
+  }
+
   const addFavoriteMovie = (movie) => {
     // make a copy of current list and add new movie
     const newFavoriteList = [...favorites, movie];
     setFavorites(newFavoriteList);
+
+    // save to local storage //
+    saveMovieToLocalStorage(newFavoriteList);
   }
 
   const removeFavoriteMovie = (movie) => {
     // remove movie from favorites
     const newFavoriteList = favorites.filter((favoriteMovie) => favoriteMovie.imdbID !== movie.imdbID);
     setFavorites(newFavoriteList);
+
+    // remove from localstorage
+    saveMovieToLocalStorage(newFavoriteList);
   }
   
   return (

@@ -1,5 +1,4 @@
 import React from "react";
-import AddFavorite from "./AddFavorite";
 
 const MovieList = (props) => {
     const FavoriteMovie = props.favoriteMovie;
