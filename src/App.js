@@ -8,7 +8,7 @@ import AddFavorite from './components/AddFavorite';
 
 function App() {
   const [movies, setMovies] = useState([]);
-
+  const [favorites, setFavorites] = useState([]);
   const [searchValue, setSearchValue] = useState('');
 
   const getMovieRequest = async (searchValue) => {
@@ -27,6 +27,12 @@ function App() {
   useEffect(() => {
     getMovieRequest(searchValue);
   }, [searchValue]);
+
+  const addFavoriteMovie = (movie) => {
+    // make a copy of current list and add new movie
+    const newFavoriteList = [...favorites, movie];
+    setFavorites(newFavoriteList);
+  }
   
   return (
     <div className='container-fluid'>
@@ -36,7 +42,15 @@ function App() {
       </div>
 
       <div className='d-flex flex-row' style={{  overflowY: 'auto' }}>
-        <MovieList movies={movies}  favoriteMovie={AddFavorite} />
+        <MovieList movies={movies} handleFavoritesClick={addFavoriteMovie}  favoriteMovie={AddFavorite} />
+      </div>
+
+      <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
+        <MovieListHeading heading="Favorites" />
+      </div>
+
+      <div className='d-flex flex-row' style={{  overflowY: 'auto' }}>
+        <MovieList movies={favorites} handleFavoritesClick={addFavoriteMovie}  favoriteMovie={AddFavorite} />
       </div>
     </div>
   );
