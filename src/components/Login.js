@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { account } from './Appwrite';
-import { Link } from 'react-router-dom';
-import Register from './Register';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    const navigate = useNavigate(); // Initialize the useNavigate hook for redirect
+
     const [credentials, setCredentials] = useState({
         email: '',
         password: ''
@@ -23,7 +24,8 @@ const Login = () => {
             // Login user with email and password
             const session = await account.createEmailPasswordSession(credentials.email, credentials.password);
             console.log('User logged in:', session);
-            // Redirect user to protected area
+            // Redirect user to home
+            navigate("/home")
         } catch (error) {
             console.error('Login error:', error);
         }
@@ -32,7 +34,7 @@ const Login = () => {
     return (
         <div className="d-flex justify-content-center align-items-center vh-100">
             <div class="text-start border rounded p-3 w-25">
-                <h2>Login to Continue</h2>
+                <h2 className='text-center'>Login</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group mt-2">
                         <label>Email</label>
@@ -60,6 +62,9 @@ const Login = () => {
                     <div className="d-flex flex-row justify-content-between mt-2 w-100">
                         <p>Don't have an account?</p>
                         <Link to="/register" className="text-decoration-none">Register</Link>
+                    </div>
+                    <div className='text-end'>
+                        <Link to="/forgot-password" className="text-decoration-none">Forgot password?</Link>
                     </div>
                 </form>
             </div>

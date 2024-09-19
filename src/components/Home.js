@@ -34,7 +34,7 @@ const Home = () => {
 
     // retrieve movies from local storage when app loads
     useEffect(() => {
-        const favoriteMovies = JSON.parse(localStorage.getItem('favorite-movie-key'));
+        const favoriteMovies = JSON.parse(localStorage.getItem('favorite-movie-key')) || [];
         setFavorites(favoriteMovies);
     }, []);
 

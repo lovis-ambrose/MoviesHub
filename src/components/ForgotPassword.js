@@ -24,7 +24,7 @@ const ForgotPassword = () => {
     return (
         <div class="d-flex justify-content-center align-items-center vh-100">
             <div class="text-start border rounded p-3 w-25">
-                <h2>Forgot Password</h2>
+                <h2 className='text-center'>Forgot Password</h2>
                 <form onSubmit={handleSubmit}>
                     <div class="form-group">
                         <label>Email</label>
