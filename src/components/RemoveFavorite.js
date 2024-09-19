@@ -1,6 +1,6 @@
 import React from "react";
 
-const Removefavorites = () => {
+const RemoveFavorites = () => {
     return (
         <>
             <span style={{marginRight: 10}}>Remove from Favorites</span>
@@ -11,4 +11,4 @@ const Removefavorites = () => {
     );
 }
 
-export default Removefavorites;
+export default RemoveFavorites;
