@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { account, databases, ID } from "./Appwrite";
+import { Link } from "react-router-dom";
 // import { ID } from "./Appwrite";
 
 const Register = () => {
@@ -97,6 +98,10 @@ const Register = () => {
                         />
                     </div>
                     <button type="submit" className="btn btn-primary mt-2 w-100">Register</button>
+                    <div className="d-flex flex-row justify-content-between mt-2 w-100">
+                        <p>Already have an account?</p>
+                        <Link to="/login" className="text-decoration-none">Login</Link>
+                    </div>
                 </form>
             </div>
         </div>
