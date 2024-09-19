@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { databases } from "./Appwrite";
+import { account, databases } from "./Appwrite";
 import MovieList from './MovieList';
 import MovieListHeading from './MovieListHeading';
 import SearchMovie from './SearchField';
 import AddFavorite from './AddFavorite';
 import Removefavorites from './RemoveFavorite';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 
 const Home = () => {
 
@@ -13,6 +16,9 @@ const Home = () => {
     const [searchValue, setSearchValue] = useState('');
     const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
     const movieCollectionId = process.env.REACT_APP_MOVIE_COLLECTION_ID;
+
+    const handleNavigation = useNavigate();
+    
 
     const getMovieRequest = async (searchValue) => {
         const apiUrl = `http://www.omdbapi.com/?s=${searchValue}&apikey=7b34463d`
@@ -86,11 +92,24 @@ const Home = () => {
         }
     };
 
+    // Handle logout functionality
+    const handleLogout = async () => {
+        try {
+            await account.deleteSession('current'); // Log out the user
+            handleNavigation('/login'); // Redirect to login page
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
     return(
         <div className='container-fluid'>
             <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
                 <MovieListHeading heading="Movies" />
                 <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue} />
+                <button className="btn btn-link" onClick={handleLogout} title="Logout">
+                    <FontAwesomeIcon icon={faSignOutAlt} size="2x" />
+                </button>
             </div>
 
             <div className='d-flex flex-row' style={{  overflowY: 'auto' }}>

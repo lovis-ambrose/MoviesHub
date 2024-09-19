@@ -3,7 +3,7 @@ import { account } from './Appwrite';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-    const navigate = useNavigate(); // Initialize the useNavigate hook for redirect
+    const handleNavigation = useNavigate(); // Initialize the useNavigate hook for redirect
 
     const [credentials, setCredentials] = useState({
         email: '',
@@ -25,7 +25,7 @@ const Login = () => {
             const session = await account.createEmailPasswordSession(credentials.email, credentials.password);
             console.log('User logged in:', session);
             // Redirect user to home
-            navigate("/home")
+            handleNavigation("/home")
         } catch (error) {
             console.error('Login error:', error);
         }
