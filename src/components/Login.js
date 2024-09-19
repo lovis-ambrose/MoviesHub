@@ -25,7 +25,7 @@ const Login = () => {
             const session = await account.createEmailPasswordSession(credentials.email, credentials.password);
             console.log('User logged in:', session);
             // Redirect user to home
-            handleNavigation("/home")
+            handleNavigation("/")
         } catch (error) {
             console.error('Login error:', error);
         }

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { account, databases } from "./Appwrite";
+import React, {useEffect, useState} from "react";
+import {account, databases} from "./Appwrite";
 import MovieList from './MovieList';
 import MovieListHeading from './MovieListHeading';
 import SearchMovie from './SearchField';
 import AddFavorite from './AddFavorite';
 import Removefavorites from './RemoveFavorite';
-import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import {useNavigate} from 'react-router-dom';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSignOutAlt} from "@fortawesome/free-solid-svg-icons/faSignOutAlt";
 
 const Home = () => {
 
