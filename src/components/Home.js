@@ -145,8 +145,7 @@ const Home = () => {
             </div>
 
             <div className='d-flex flex-row' style={{ overflowY: 'auto' }}>
-                <MovieList movies={favorites} handleFavoritesClick={removeFavoriteMovie}
-                           favoriteMovie={RemoveFavorites}/>
+                <MovieList movies={favorites} handleFavoritesClick={removeFavoriteMovie} favoriteMovie={RemoveFavorites}/>
             </div>
         </div>
     );
