@@ -4,33 +4,34 @@ import MovieList from './MovieList';
 import MovieListHeading from './MovieListHeading';
 import SearchMovie from './SearchField';
 import AddFavorite from './AddFavorite';
-import RemoveFavorites from "./RemoveFavorite";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import RemoveFavorites from "./RemoveFavorite";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons/faSignOut";
 import { faSignIn } from "@fortawesome/free-solid-svg-icons/faSignIn";
-import { faHeart } from "@fortawesome/free-solid-svg-icons/faHeart";
 
 const Home = () => {
     const [movies, setMovies] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isFavoritesTab, setIsFavoritesTab] = useState(false); // Manage which tab is active
     const handleNavigation = useNavigate();
 
-    // Fetch favorite movies from Appwrite database
-    const fetchFavoritesFromDatabase = async () => {
+    const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
+    const movieCollectionId = process.env.REACT_APP_MOVIE_COLLECTION_ID;
+
+    // Fetch movies from Appwrite database
+    const fetchMoviesFromDatabase = async () => {
         try {
-            const response = await databases.listDocuments("66eab0820029be0edb42", "66eab10c0029c603f351");
-            const favoriteDocs = response.documents;
-            setFavorites(favoriteDocs);  // Update favorites state with movies from Appwrite
+            const response = await databases.listDocuments("66eab0820029be0edb42", "66eab10c0029c603f351",);
+            const movieDocs = response.documents;
+            setMovies(movieDocs);  // Update state with movies from database
         } catch (error) {
-            console.error('Error fetching favorites from Appwrite', error);
+            console.error('Error fetching movies from Appwrite', error);
         }
     };
 
-    // Check if user is logged in
+    // Check if user is logged in when the component mounts
     useEffect(() => {
         const checkUserSession = async () => {
             try {
@@ -39,7 +40,7 @@ const Home = () => {
                     setIsLoggedIn(true);
                 }
             } catch (error) {
-                console.log("User not found");
+                console.log("user not found");
                 setIsLoggedIn(false);
             }
         };
@@ -59,30 +60,27 @@ const Home = () => {
 
     // Fetch movies when search value changes
     useEffect(() => {
-        if (!isFavoritesTab) {
-            getMovieRequest(searchValue);
-        }
-    }, [searchValue, isFavoritesTab]);
+        getMovieRequest(searchValue);
+    }, [searchValue]);
 
-    // Fetch favorite movies from Appwrite on load
+    // Fetch favorite movies from the Appwrite database on load
     useEffect(() => {
-        fetchFavoritesFromDatabase();
+        fetchMoviesFromDatabase();  // Load favorite movies from Appwrite
     }, []);
 
-    // Save movie to favorites
-    const saveFavoriteMovie = async (movie) => {
+    const addFavoriteMovie = async (movie) => {
         const newFavoriteList = [...favorites, movie];
         setFavorites(newFavoriteList);  // Update favorites state
 
         // Save movie to Appwrite database
         try {
             await databases.createDocument("66eab0820029be0edb42", "66eab10c0029c603f351", 'unique()', {
-                title: movie.Title,
-                year: movie.Year,
-                type: movie.Type,
-                poster: movie.Poster,
+                Title: movie.Title,
+                Year: movie.Year,
+                Type: movie.Type,
+                Poster: movie.Poster,
                 imdbID: movie.imdbID,
-                genre: movie.Genre || "N/A",
+                Genre: movie.Genre || "N/A",
             });
             console.log('Movie added to Appwrite database');
         } catch (error) {
@@ -90,8 +88,7 @@ const Home = () => {
         }
     };
 
-    // Delete favorite movie
-    const deleteFavoriteMovie = async (movie) => {
+    const removeFavoriteMovie = async (movie) => {
         const newFavoriteList = favorites.filter((favoriteMovie) => favoriteMovie.imdbID !== movie.imdbID);
         setFavorites(newFavoriteList);  // Update favorites state
 
@@ -105,7 +102,7 @@ const Home = () => {
         }
     };
 
-    // Handle logout
+    // Handle logout functionality
     const handleLogout = async () => {
         try {
             await account.deleteSession('current'); // Log out the user
@@ -116,37 +113,39 @@ const Home = () => {
         }
     };
 
-    // Toggle between movies and favorites
-    const handleTabChange = () => {
-        setIsFavoritesTab(!isFavoritesTab); // Toggle between movies and favorites
+    // Handle login redirect
+    const handleLoginRedirect = () => {
+        handleNavigation('/login'); // Redirect to the login page
     };
 
     return (
         <div className='container-fluid'>
             <div className="d-flex justify-content-between align-items-center mt-4 mb-4 sticky-top">
-                <MovieListHeading heading={isFavoritesTab ? "Favorites" : "Movies"} />
-                <div className="m-2" onClick={handleTabChange}>
-                    <FontAwesomeIcon icon={faHeart} title="Favorites" size="2x" color={isFavoritesTab ? "green" : "red"} cursor="pointer" />
-                </div>
-                <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue} />
+                <MovieListHeading heading="Movies"/>
+                <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue}/>
                 {/* Conditionally show login or logout button */}
                 {isLoggedIn ? (
                     <button className="btn btn-link" onClick={handleLogout} title="Logout">
-                        <FontAwesomeIcon icon={faSignOut} size="2x" />
+                        <FontAwesomeIcon icon={faSignOut} size="2x"/>
                     </button>
                 ) : (
-                    <button className="btn btn-link" onClick={() => handleNavigation('/login')} title="Login">
-                        <FontAwesomeIcon icon={faSignIn} size="2x" />
+                    <button className="btn btn-link" onClick={handleLoginRedirect} title="Login">
+                        <FontAwesomeIcon icon={faSignIn} size="2x"/>
                     </button>
                 )}
             </div>
 
             <div className='d-flex flex-row' style={{ overflowY: 'auto' }}>
-                {isFavoritesTab ? (
-                    <MovieList movies={movies} handleFavoritesClick={saveFavoriteMovie} favoriteMovie={AddFavorite} />
-                ) : (
-                    <MovieList movies={favorites} handleFavoritesClick={deleteFavoriteMovie} favoriteMovie={RemoveFavorites} />
-                )}
+                <MovieList movies={movies} handleFavoritesClick={addFavoriteMovie} favoriteMovie={AddFavorite}/>
+            </div>
+
+            <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
+                <MovieListHeading heading="Favorites"/>
+            </div>
+
+            <div className='d-flex flex-row' style={{ overflowY: 'auto' }}>
+                <MovieList movies={favorites} handleFavoritesClick={removeFavoriteMovie}
+                           favoriteMovie={RemoveFavorites}/>
             </div>
         </div>
     );
