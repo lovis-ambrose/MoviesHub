@@ -4,9 +4,9 @@ import MovieList from './MovieList';
 import MovieListHeading from './MovieListHeading';
 import SearchMovie from './SearchField';
 import AddFavorite from './AddFavorite';
+import RemoveFavorites from './RemoveFavorite';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import RemoveFavorites from "./RemoveFavorite";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons/faSignOut";
 import { faSignIn } from "@fortawesome/free-solid-svg-icons/faSignIn";
 
@@ -23,9 +23,9 @@ const Home = () => {
     // Fetch movies from Appwrite database
     const fetchMoviesFromDatabase = async () => {
         try {
-            const response = await databases.listDocuments("66eab0820029be0edb42", "66eab10c0029c603f351",);
+            const response = await databases.listDocuments("66eab0820029be0edb42", "66eab10c0029c603f351");
             const movieDocs = response.documents;
-            setMovies(movieDocs);  // Update state with movies from database
+            setFavorites(movieDocs);  // Update state with movies from database
         } catch (error) {
             console.error('Error fetching movies from Appwrite', error);
         }
@@ -54,14 +54,20 @@ const Home = () => {
         const responseJson = await response.json();
 
         if (responseJson.Search) {
-            setMovies(responseJson.Search);  // Update state with search results
+            // Filter search results to exclude already saved favorites
+            const searchResults = responseJson.Search.filter(
+                (movie) => !favorites.some((fav) => fav.imdbID === movie.imdbID)
+            );
+            setMovies(searchResults);  // Update state with search results
         }
     };
 
     // Fetch movies when search value changes
     useEffect(() => {
-        getMovieRequest(searchValue);
-    }, [searchValue]);
+        if (searchValue) {
+            getMovieRequest(searchValue);
+        }
+    }, [searchValue, favorites]);
 
     // Fetch favorite movies from the Appwrite database on load
     useEffect(() => {
@@ -123,7 +129,6 @@ const Home = () => {
             <div className="d-flex justify-content-between align-items-center mt-4 mb-4 sticky-top">
                 <MovieListHeading heading="Movies"/>
                 <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue}/>
-                {/* Conditionally show login or logout button */}
                 {isLoggedIn ? (
                     <button className="btn btn-link" onClick={handleLogout} title="Logout">
                         <FontAwesomeIcon icon={faSignOut} size="2x"/>
@@ -135,16 +140,18 @@ const Home = () => {
                 )}
             </div>
 
+            {/* Movie Search Results with "Add to Favorites" */}
             <div className='d-flex flex-row' style={{ overflowY: 'auto' }}>
-                <MovieList movies={movies} handleFavoritesClick={removeFavoriteMovie} favoriteMovie={RemoveFavorites}/>
+                <MovieList movies={movies} handleFavoritesClick={addFavoriteMovie} favoriteMovieComponent={AddFavorite} />
             </div>
 
             <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
                 <MovieListHeading heading="Favorites"/>
             </div>
 
+            {/* Favorite Movies with "Remove from Favorites" */}
             <div className='d-flex flex-row' style={{ overflowY: 'auto' }}>
-                <MovieList movies={favorites} handleFavoritesClick={addFavoriteMovie} favoriteMovie={AddFavorite}/>
+                <MovieList movies={favorites} handleFavoritesClick={removeFavoriteMovie} favoriteMovieComponent={RemoveFavorites} />
             </div>
         </div>
     );
