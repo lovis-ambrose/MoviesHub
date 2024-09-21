@@ -7,9 +7,10 @@ const MovieList = (props) => {
         <>
             {props.movies.map((movie) => (
                 <div className="image-container d-flex justify-content-start m-3" key={movie.imdbID}>
-                    <img src={movie.Poster} alt={movie.Title} />
-                    <div className="overlay d-flex align-items-center justify-content-center" onClick={() => props.handleFavoritesClick(movie)}>
-                        <FavoriteMovieComponent />
+                    <img src={movie.Poster} alt={movie.Title} title="click to see Movie Details" />
+                    <div className="overlay d-flex align-items-center justify-content-center row" onClick={() => props.handleFavoritesClick(movie)}>
+                        <h3>{movie.Title}</h3>
+                        <FavoriteMovieComponent/>
                     </div>
                 </div>
             ))}
