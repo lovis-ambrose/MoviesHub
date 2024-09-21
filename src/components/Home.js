@@ -136,7 +136,7 @@ const Home = () => {
             </div>
 
             <div className='d-flex flex-row' style={{ overflowY: 'auto' }}>
-                <MovieList movies={movies} handleFavoritesClick={addFavoriteMovie} favoriteMovie={AddFavorite}/>
+                <MovieList movies={movies} handleFavoritesClick={removeFavoriteMovie} favoriteMovie={RemoveFavorites}/>
             </div>
 
             <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
@@ -144,8 +144,7 @@ const Home = () => {
             </div>
 
             <div className='d-flex flex-row' style={{ overflowY: 'auto' }}>
-                <MovieList movies={favorites} handleFavoritesClick={removeFavoriteMovie}
-                           favoriteMovie={RemoveFavorites}/>
+                <MovieList movies={favorites} handleFavoritesClick={addFavoriteMovie} favoriteMovie={AddFavorite}/>
             </div>
         </div>
     );
