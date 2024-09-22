@@ -86,7 +86,6 @@ const Home = () => {
                 Type: movie.Type,
                 Poster: movie.Poster,
                 imdbID: movie.imdbID,
-                Genre: movie.Genre || "N/A",
             });
             console.log('Movie added to Appwrite database');
         } catch (error) {
