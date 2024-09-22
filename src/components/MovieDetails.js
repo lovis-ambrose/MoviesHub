@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import MovieListHeading from "./MovieListHeading";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignOut, faSignIn } from "@fortawesome/free-solid-svg-icons";
-import { account, databases } from "./Appwrite";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSignIn, faSignOut} from "@fortawesome/free-solid-svg-icons";
+import {account, databases} from "./Appwrite";
 
 const MovieDetails = () => {
     const { imdbID } = useParams();

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { account, databases } from "./Appwrite";
 import MovieList from './MovieList';
 import MovieListHeading from './MovieListHeading';
@@ -21,7 +21,7 @@ const Home = () => {
     const movieCollectionId = process.env.REACT_APP_MOVIE_COLLECTION_ID;
 
     // Fetch movies from Appwrite database
-    const fetchMoviesFromDatabase = async () => {
+    const fetchMoviesFromDatabase = useCallback(async () => {
         try {
             const response = await databases.listDocuments(databaseId, movieCollectionId);
             const movieDocs = response.documents;
@@ -29,7 +29,7 @@ const Home = () => {
         } catch (error) {
             console.error('Error fetching movies from Appwrite', error);
         }
-    };
+    }, [databaseId, movieCollectionId]);
 
     // Check if user is logged in when the component mounts
     useEffect(() => {
@@ -48,7 +48,7 @@ const Home = () => {
     }, []);
 
     // Fetch movies from OMDB API based on search value
-    const getMovieRequest = async (searchValue) => {
+    const getMovieRequest = useCallback(async (searchValue) => {
         const apiUrl = `${process.env.REACT_APP_OMDB_API_URL}?s=${searchValue}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`;
         const response = await fetch(apiUrl);
         const responseJson = await response.json();
@@ -60,19 +60,19 @@ const Home = () => {
             );
             setMovies(searchResults);  // Update state with search results
         }
-    };
+    }, [favorites]);
 
     // Fetch movies when search value changes
     useEffect(() => {
         if (searchValue) {
             getMovieRequest(searchValue);
         }
-    }, [searchValue, favorites]);
+    }, [searchValue, favorites, getMovieRequest]);
 
     // Fetch favorite movies from the Appwrite database on load
     useEffect(() => {
         fetchMoviesFromDatabase();  // Load favorite movies from Appwrite
-    }, []);
+    }, [fetchMoviesFromDatabase]);
 
     const addFavoriteMovie = async (movie) => {
         const newFavoriteList = [...favorites, movie];
