@@ -49,7 +49,6 @@ const Home = () => {
 
     // Fetch movies from OMDB API based on search value
     const getMovieRequest = async (searchValue) => {
-        // const apiUrl = `http://www.omdbapi.com/?s=${searchValue}&apikey=7b34463d`;
         const apiUrl = `${process.env.REACT_APP_OMDB_API_URL}?s=${searchValue}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`;
         const response = await fetch(apiUrl);
         const responseJson = await response.json();

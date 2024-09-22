@@ -14,6 +14,7 @@ const MovieDetails = () => {
     const handleNavigation = useNavigate();
     const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
     const movieCollectionId = process.env.REACT_APP_MOVIE_COLLECTION_ID;
+    const apiUrl = process.env.REACT_APP_OMDB_API_URL;
     const apiKey = process.env.REACT_APP_OMDB_API_KEY;
 
     // Check if user is logged in when the component mounts
@@ -36,8 +37,7 @@ const MovieDetails = () => {
     useEffect(() => {
         const fetchMovieDetails = async () => {
             try {
-                // const response = await fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`);
-                const response = await fetch(`${process.env.REACT_APP_OMDB_API_URL}?i=${imdbID}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`);
+                const response = await fetch(`${apiUrl}?i=${imdbID}&apikey=${apiKey}`);
                 const data = await response.json();
                 setMovieDetails(data);
 
