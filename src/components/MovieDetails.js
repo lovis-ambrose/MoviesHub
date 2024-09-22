@@ -12,7 +12,9 @@ const MovieDetails = () => {
     const [isFavorite, setIsFavorite] = useState(false);
     const [favoriteMovieId, setFavoriteMovieId] = useState(null);
     const handleNavigation = useNavigate();
-    const apiKey = "7b34463d";
+    const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
+    const movieCollectionId = process.env.REACT_APP_MOVIE_COLLECTION_ID;
+    const apiKey = process.env.REACT_APP_OMDB_API_KEY;
 
     // Check if user is logged in when the component mounts
     useEffect(() => {
@@ -34,12 +36,13 @@ const MovieDetails = () => {
     useEffect(() => {
         const fetchMovieDetails = async () => {
             try {
-                const response = await fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`);
+                // const response = await fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`);
+                const response = await fetch(`${process.env.REACT_APP_OMDB_API_URL}?i=${imdbID}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`);
                 const data = await response.json();
                 setMovieDetails(data);
 
                 // Check if the movie is already in favorites
-                const responseDb = await databases.listDocuments("66eab0820029be0edb42", "66eab10c0029c603f351", [
+                const responseDb = await databases.listDocuments(databaseId, movieCollectionId, [
                     {
                         key: "imdbID",
                         value: imdbID,
@@ -72,7 +75,7 @@ const MovieDetails = () => {
                 Poster: movieDetails.Poster,
                 imdbID: movieDetails.imdbID,
             };
-            const response = await databases.createDocument("66eab0820029be0edb42", "66eab10c0029c603f351", 'unique()', movie);
+            const response = await databases.createDocument(databaseId, movieCollectionId, 'unique()', movie);
             setIsFavorite(true);
             setFavoriteMovieId(response.$id); // Store the document ID
             console.log("Movie added to Appwrite database");
@@ -84,7 +87,7 @@ const MovieDetails = () => {
     // Remove movie from favorites
     const removeFavoriteMovie = async () => {
         try {
-            await databases.deleteDocument("66eab0820029be0edb42", "66eab10c0029c603f351", favoriteMovieId);
+            await databases.deleteDocument(databaseId, movieCollectionId, favoriteMovieId);
             setIsFavorite(false);
             setFavoriteMovieId(null); // Clear the document ID
             console.log("Movie removed from Appwrite database");

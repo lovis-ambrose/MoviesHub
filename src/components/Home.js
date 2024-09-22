@@ -23,7 +23,7 @@ const Home = () => {
     // Fetch movies from Appwrite database
     const fetchMoviesFromDatabase = async () => {
         try {
-            const response = await databases.listDocuments("66eab0820029be0edb42", "66eab10c0029c603f351");
+            const response = await databases.listDocuments(databaseId, movieCollectionId);
             const movieDocs = response.documents;
             setFavorites(movieDocs);  // Update state with movies from database
         } catch (error) {
@@ -49,7 +49,8 @@ const Home = () => {
 
     // Fetch movies from OMDB API based on search value
     const getMovieRequest = async (searchValue) => {
-        const apiUrl = `http://www.omdbapi.com/?s=${searchValue}&apikey=7b34463d`;
+        // const apiUrl = `http://www.omdbapi.com/?s=${searchValue}&apikey=7b34463d`;
+        const apiUrl = `${process.env.REACT_APP_OMDB_API_URL}?s=${searchValue}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`;
         const response = await fetch(apiUrl);
         const responseJson = await response.json();
 
@@ -80,7 +81,7 @@ const Home = () => {
 
         // Save movie to Appwrite database
         try {
-            await databases.createDocument("66eab0820029be0edb42", "66eab10c0029c603f351", 'unique()', {
+            await databases.createDocument(databaseId, movieCollectionId, 'unique()', {
                 Title: movie.Title,
                 Year: movie.Year,
                 Type: movie.Type,
@@ -100,7 +101,7 @@ const Home = () => {
         // Remove movie from Appwrite database
         try {
             const movieDocId = movie.$id; // Use the document ID from the database
-            await databases.deleteDocument("66eab0820029be0edb42", "66eab10c0029c603f351", movieDocId);
+            await databases.deleteDocument(databaseId, movieCollectionId, movieDocId);
             console.log('Movie removed from Appwrite database');
         } catch (error) {
             console.error('Error removing movie from Appwrite database', error);

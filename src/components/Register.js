@@ -48,7 +48,7 @@ const Register = () => {
             const membershipStart = new Date().toISOString();
             const membershipEnd = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour later
     
-            await databases.createDocument("66eab0820029be0edb42", "66eeb2f70036f3262380", response.$id, {
+            await databases.createDocument(databaseId, userCollectionId, response.$id, {
                 fullName: user.fullName,
                 email: user.email,
                 password: user.password,
