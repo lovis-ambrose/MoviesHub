@@ -1,25 +1,24 @@
-import React, {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import MovieListHeading from "./MovieListHeading";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSignOut} from "@fortawesome/free-solid-svg-icons/faSignOut";
-import {faSignIn} from "@fortawesome/free-solid-svg-icons/faSignIn";
-import {account} from "./Appwrite";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignOut, faSignIn } from "@fortawesome/free-solid-svg-icons";
+import { account, databases } from "./Appwrite";
 
 const MovieDetails = () => {
     const { imdbID } = useParams();
     const [movieDetails, setMovieDetails] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [favoriteMovieId, setFavoriteMovieId] = useState(null);
     const handleNavigation = useNavigate();
     const apiKey = "7b34463d";
-
 
     // Check if user is logged in when the component mounts
     useEffect(() => {
         const checkUserSession = async () => {
             try {
-                const user = await account.get(); // Check if user session exists
+                const user = await account.get();
                 if (user.$id) {
                     setIsLoggedIn(true);
                 }
@@ -31,12 +30,30 @@ const MovieDetails = () => {
         checkUserSession();
     }, []);
 
+    // Fetch movie details
     useEffect(() => {
         const fetchMovieDetails = async () => {
             try {
                 const response = await fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`);
                 const data = await response.json();
                 setMovieDetails(data);
+
+                // Check if the movie is already in favorites
+                const responseDb = await databases.listDocuments("66eab0820029be0edb42", "66eab10c0029c603f351", [
+                    {
+                        key: "imdbID",
+                        value: imdbID,
+                        operator: "equal"
+                    }
+                ]);
+
+                if (responseDb.documents.length > 0) {
+                    setIsFavorite(true);
+                    setFavoriteMovieId(responseDb.documents[0].$id); // Store the document ID for removing later
+                } else {
+                    setIsFavorite(false);
+                    setFavoriteMovieId(null);
+                }
             } catch (error) {
                 console.error("Error fetching movie details:", error);
             }
@@ -44,6 +61,37 @@ const MovieDetails = () => {
 
         fetchMovieDetails();
     }, [imdbID]);
+
+    // Add movie to favorites
+    const addFavoriteMovie = async () => {
+        try {
+            const movie = {
+                Title: movieDetails.Title,
+                Year: movieDetails.Year,
+                Type: movieDetails.Type,
+                Poster: movieDetails.Poster,
+                imdbID: movieDetails.imdbID,
+            };
+            const response = await databases.createDocument("66eab0820029be0edb42", "66eab10c0029c603f351", 'unique()', movie);
+            setIsFavorite(true);
+            setFavoriteMovieId(response.$id); // Store the document ID
+            console.log("Movie added to Appwrite database");
+        } catch (error) {
+            console.error("Error adding movie to Appwrite database", error);
+        }
+    };
+
+    // Remove movie from favorites
+    const removeFavoriteMovie = async () => {
+        try {
+            await databases.deleteDocument("66eab0820029be0edb42", "66eab10c0029c603f351", favoriteMovieId);
+            setIsFavorite(false);
+            setFavoriteMovieId(null); // Clear the document ID
+            console.log("Movie removed from Appwrite database");
+        } catch (error) {
+            console.error("Error removing movie from Appwrite database", error);
+        }
+    };
 
     if (!movieDetails) {
         return <div>Loading...</div>;
@@ -69,21 +117,21 @@ const MovieDetails = () => {
         <div>
             <div className="d-flex justify-content-between align-items-center mt-4 mb-4 sticky-top">
                 <MovieListHeading heading="Home" />
-                <MovieListHeading heading="Movie Details"/>
+                <MovieListHeading heading="Movie Details" />
                 {isLoggedIn ? (
                     <button className="btn btn-link" onClick={handleLogout} title="Logout">
-                        <FontAwesomeIcon icon={faSignOut} size="2x"/>
+                        <FontAwesomeIcon icon={faSignOut} size="2x" />
                     </button>
                 ) : (
                     <button className="btn btn-link" onClick={handleLoginRedirect} title="Login">
-                        <FontAwesomeIcon icon={faSignIn} size="2x"/>
+                        <FontAwesomeIcon icon={faSignIn} size="2x" />
                     </button>
                 )}
             </div>
             <div className="container">
                 <div className="row">
                     <div className="col-12 col-md-4 mb-3">
-                        <img src={movieDetails.Poster} alt={movieDetails.Title} className="img-fluid"/>
+                        <img src={movieDetails.Poster} alt={movieDetails.Title} className="img-fluid" />
                     </div>
                     <div className="col-12 col-md-8">
                         <h2>{movieDetails.Title}</h2>
@@ -109,6 +157,13 @@ const MovieDetails = () => {
                         <p><strong>Plot:</strong> {movieDetails.Plot}</p>
                     </div>
                 </div>
+            </div>
+            <div className="text-end m-4">
+                {isFavorite ? (
+                    <button className="btn btn-danger" onClick={removeFavoriteMovie}>Delete Movie</button>
+                ) : (
+                    <button className="btn btn-primary" onClick={addFavoriteMovie}>Save Movie</button>
+                )}
             </div>
         </div>
     );
