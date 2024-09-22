@@ -63,7 +63,7 @@ const MovieDetails = () => {
         };
 
         fetchMovieDetails();
-    }, [imdbID]);
+    }, [imdbID, apiKey, apiUrl, databaseId, movieCollectionId]);
 
     // Add movie to favorites
     const addFavoriteMovie = async () => {
