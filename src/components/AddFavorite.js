@@ -5,7 +5,7 @@ import {faHeart} from "@fortawesome/free-solid-svg-icons/faHeart";
 const AddFavorite = () => {
     return (
         <>
-            <span style={{marginRight: 10}}>Delete Movie <FontAwesomeIcon icon={faHeart} color="red"/></span>
+            <span>Save Movie <FontAwesomeIcon icon={faHeart} color="red"/></span>
         </>
     );
 };
