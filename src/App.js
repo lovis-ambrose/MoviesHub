@@ -6,6 +6,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import ForgotPassword from './components/ForgotPassword';
 import Home from './components/Home';
+import MovieDetails from "./components/MovieDetails";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/movie/:imdbID" element={<MovieDetails />} />
           </Routes>
       </div>
   </Router>
