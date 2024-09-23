@@ -7,15 +7,14 @@ import AddFavorite from './AddFavorite';
 import RemoveFavorites from './RemoveFavorite';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignOut } from "@fortawesome/free-solid-svg-icons/faSignOut";
-import { faSignIn } from "@fortawesome/free-solid-svg-icons/faSignIn";
+import { faSignOut, faSignIn } from "@fortawesome/free-solid-svg-icons";
 
 const Home = () => {
     const [movies, setMovies] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const handleNavigation = useNavigate();
+    const navigate = useNavigate();
 
     const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
     const movieCollectionId = process.env.REACT_APP_MOVIE_COLLECTION_ID;
@@ -24,23 +23,20 @@ const Home = () => {
     const fetchMoviesFromDatabase = useCallback(async () => {
         try {
             const response = await databases.listDocuments(databaseId, movieCollectionId);
-            const movieDocs = response.documents;
-            setFavorites(movieDocs);  // Update state with movies from database
+            setFavorites(response.documents);  // Load movies from the database into favorites
         } catch (error) {
-            console.error('Error fetching movies from Appwrite', error);
+            console.error('Error fetching movies from Appwrite:', error);
         }
     }, [databaseId, movieCollectionId]);
 
-    // Check if user is logged in when the component mounts
+    // Check if user is logged in when component mounts
     useEffect(() => {
         const checkUserSession = async () => {
             try {
-                const user = await account.get(); // Check if user session exists
-                if (user.$id) {
-                    setIsLoggedIn(true);
-                }
+                const user = await account.get();
+                if (user.$id) setIsLoggedIn(true);
             } catch (error) {
-                console.log("user not found");
+                console.log("User not found, not logged in");
                 setIsLoggedIn(false);
             }
         };
@@ -49,36 +45,38 @@ const Home = () => {
 
     // Fetch movies from OMDB API based on search value
     const getMovieRequest = useCallback(async (searchValue) => {
-        const apiUrl = `${process.env.REACT_APP_OMDB_API_URL}?s=${searchValue}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`;
-        const response = await fetch(apiUrl);
-        const responseJson = await response.json();
+        if (!searchValue) return;
 
-        if (responseJson.Search) {
-            // Filter search results to exclude already saved favorites
-            const searchResults = responseJson.Search.filter(
-                (movie) => !favorites.some((fav) => fav.imdbID === movie.imdbID)
-            );
-            setMovies(searchResults);  // Update state with search results
+        const apiUrl = `${process.env.REACT_APP_OMDB_API_URL}?s=${searchValue}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`;
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            if (data.Search) {
+                // Exclude movies already in favorites from search results
+                const filteredMovies = data.Search.filter(
+                    (movie) => !favorites.some((fav) => fav.imdbID === movie.imdbID)
+                );
+                setMovies(filteredMovies);
+            }
+        } catch (error) {
+            console.error("Error fetching movies from OMDB API:", error);
         }
     }, [favorites]);
 
-    // Fetch movies when search value changes
     useEffect(() => {
-        if (searchValue) {
-            getMovieRequest(searchValue);
-        }
-    }, [searchValue, favorites, getMovieRequest]);
+        getMovieRequest(searchValue);
+    }, [searchValue, getMovieRequest]);
 
-    // Fetch favorite movies from the Appwrite database on load
     useEffect(() => {
-        fetchMoviesFromDatabase();  // Load favorite movies from Appwrite
+        fetchMoviesFromDatabase();  // Load favorite movies from database on component mount
     }, [fetchMoviesFromDatabase]);
 
+    // Add a movie to the favorites and the database
     const addFavoriteMovie = async (movie) => {
-        const newFavoriteList = [...favorites, movie];
-        setFavorites(newFavoriteList);  // Update favorites state
+        const updatedFavorites = [...favorites, movie];
+        setFavorites(updatedFavorites);
 
-        // Save movie to Appwrite database
         try {
             await databases.createDocument(databaseId, movieCollectionId, 'unique()', {
                 Title: movie.Title,
@@ -87,54 +85,53 @@ const Home = () => {
                 Poster: movie.Poster,
                 imdbID: movie.imdbID,
             });
-            console.log('Movie added to Appwrite database');
+            console.log('Movie added to the Appwrite database');
         } catch (error) {
-            console.error('Error adding movie to Appwrite database', error);
+            console.error('Error adding movie to Appwrite database:', error);
         }
     };
 
+    // Remove a movie from favorites and the database
     const removeFavoriteMovie = async (movie) => {
-        const newFavoriteList = favorites.filter((favoriteMovie) => favoriteMovie.imdbID !== movie.imdbID);
-        setFavorites(newFavoriteList);  // Update favorites state
+        const updatedFavorites = favorites.filter((fav) => fav.imdbID !== movie.imdbID);
+        setFavorites(updatedFavorites);
 
-        // Remove movie from Appwrite database
         try {
-            const movieDocId = movie.$id; // Use the document ID from the database
-            await databases.deleteDocument(databaseId, movieCollectionId, movieDocId);
+            await databases.deleteDocument(databaseId, movieCollectionId, movie.$id);
             console.log('Movie removed from Appwrite database');
         } catch (error) {
-            console.error('Error removing movie from Appwrite database', error);
+            console.error('Error removing movie from Appwrite database:', error);
         }
     };
 
-    // Handle logout functionality
+    // Handle user logout
     const handleLogout = async () => {
         try {
-            await account.deleteSession('current'); // Log out the user
+            await account.deleteSession('current');
             setIsLoggedIn(false);
-            handleNavigation('/login'); // Redirect to login page
+            navigate('/login');  // Redirect to login page
         } catch (error) {
             console.error('Logout failed:', error);
         }
     };
 
-    // Handle login redirect
+    // Redirect to login page
     const handleLoginRedirect = () => {
-        handleNavigation('/login'); // Redirect to the login page
+        navigate('/login');
     };
 
     return (
         <div className='container-fluid'>
             <div className="d-flex justify-content-between align-items-center mt-4 mb-4 sticky-top">
-                <MovieListHeading heading="Movies"/>
-                <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue}/>
+                <MovieListHeading heading="Movies" />
+                <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue} />
                 {isLoggedIn ? (
                     <button className="btn btn-link" onClick={handleLogout} title="Logout">
-                        <FontAwesomeIcon icon={faSignOut} size="2x"/>
+                        <FontAwesomeIcon icon={faSignOut} size="2x" />
                     </button>
                 ) : (
                     <button className="btn btn-link" onClick={handleLoginRedirect} title="Login">
-                        <FontAwesomeIcon icon={faSignIn} size="2x"/>
+                        <FontAwesomeIcon icon={faSignIn} size="2x" />
                     </button>
                 )}
             </div>
@@ -145,7 +142,7 @@ const Home = () => {
             </div>
 
             <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
-                <MovieListHeading heading="Favorites"/>
+                <MovieListHeading heading="Favorites" />
             </div>
 
             {/* Favorite Movies with "Remove from Favorites" */}
