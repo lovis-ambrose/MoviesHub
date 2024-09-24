@@ -109,7 +109,7 @@ const Home = () => {
         try {
             await account.deleteSession('current');
             setIsLoggedIn(false);
-            navigate('/login');  // Redirect to login page
+            navigate('/');  // logout but stay on home page
         } catch (error) {
             console.error('Logout failed:', error);
         }
