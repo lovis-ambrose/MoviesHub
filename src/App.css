@@ -9,8 +9,13 @@ body {
 }
 
 .image-container:hover {
-  cursor: pointer;
+  /*cursor: pointer;*/
   transform: scale(1.1);
+}
+
+.image-container img:hover {
+  cursor: pointer;
+  /*transform: scale(1.1);*/
 }
 
 .image-container:hover .overlay {

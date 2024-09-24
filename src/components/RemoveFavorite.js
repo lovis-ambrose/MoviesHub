@@ -5,7 +5,9 @@ import {faTrash} from "@fortawesome/free-solid-svg-icons/faTrash";
 const RemoveFavorites = () => {
     return (
         <>
-            <span>Delete Movie <FontAwesomeIcon icon={faTrash} color="red"/></span>
+            <button className="btn btn-danger">
+                <span>Delete Movie <FontAwesomeIcon icon={faTrash} color="white"/></span>
+            </button>
         </>
     );
 }
