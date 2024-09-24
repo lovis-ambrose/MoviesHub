@@ -3,7 +3,7 @@ import { account } from './Appwrite';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-    const handleNavigation = useNavigate(); // Initialize the useNavigate hook for redirect
+    const navigate = useNavigate(); // Initialize the useNavigate hook for redirection
 
     const [credentials, setCredentials] = useState({
         email: '',
@@ -24,8 +24,13 @@ const Login = () => {
             // Login user with email and password
             const session = await account.createEmailPasswordSession(credentials.email, credentials.password);
             console.log('User logged in:', session);
-            // Redirect user to home
-            handleNavigation("/")
+
+            // Retrieve the redirect path from localStorage (if any)
+            const redirectTo = localStorage.getItem("redirectAfterLogin") || '/';
+            localStorage.removeItem("redirectAfterLogin"); // Clean up the stored path
+
+            // Redirect user to the original page or home page
+            navigate(redirectTo);
         } catch (error) {
             console.error('Login error:', error);
         }
@@ -33,7 +38,7 @@ const Login = () => {
 
     return (
         <div className="d-flex justify-content-center align-items-center vh-100">
-            <div class="text-start border rounded p-3 w-25">
+            <div className="text-start border rounded p-3 w-25">
                 <h2 className='text-center'>Login</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group mt-2">

@@ -28,3 +28,19 @@ body {
   padding: 20px;
   text-align: center;
 }
+
+
+.alert-container {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  z-index: 1000;
+}
+
+.alert {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+}
