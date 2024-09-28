@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOut, faSignIn } from "@fortawesome/free-solid-svg-icons";
 import RemoveFavorites from "./RemoveFavorite";
 import AddFavorite from "./AddFavorite";
+import {showToast} from "./ToastService";
 
 const Home = () => {
     const [movies, setMovies] = useState([]);
@@ -26,7 +27,7 @@ const Home = () => {
             const response = await databases.listDocuments(databaseId, movieCollectionId);
             setFavorites(response.documents);  // Load movies from the database into favorites
         } catch (error) {
-            console.error('Error fetching movies from Appwrite:', error);
+            showToast("Error fetching movies from the database", "error");
         }
     }, [databaseId, movieCollectionId]);
 
@@ -46,7 +47,6 @@ const Home = () => {
                     }
                 }
             } catch (error) {
-                console.log("User not found, not logged in");
                 setIsLoggedIn(false);
                 setIsAdmin(false);
             }
@@ -71,7 +71,7 @@ const Home = () => {
                 setMovies(filteredMovies);
             }
         } catch (error) {
-            console.error("Error fetching movies from OMDB API:", error);
+            showToast("Error fetching movies from the API", "error");
         }
     }, [favorites]);
 
@@ -96,9 +96,9 @@ const Home = () => {
                 Poster: movie.Poster,
                 imdbID: movie.imdbID,
             });
-            console.log('Movie added to the Appwrite database');
+            showToast("Movie saved successfully", "success");
         } catch (error) {
-            console.error('Error adding movie to Appwrite database:', error);
+            showToast("An error occurred. Failed to save movie", "error");
         }
     };
 
@@ -109,9 +109,9 @@ const Home = () => {
 
         try {
             await databases.deleteDocument(databaseId, movieCollectionId, movie.$id);
-            console.log('Movie removed from Appwrite database');
+            showToast("Movie successfully deleted", "success");
         } catch (error) {
-            console.error('Error removing movie from Appwrite database:', error);
+            showToast("An error occurred. Movie not deleted.", "error");
         }
     };
 
@@ -121,9 +121,10 @@ const Home = () => {
             await account.deleteSession('current');
             setIsLoggedIn(false);
             setIsAdmin(false);
+            showToast("Logout successful", "success");
             navigate('/');  // logout but stay on home page
         } catch (error) {
-            console.error('Logout failed:', error);
+            showToast("Logout failed", "error");
         }
     };
 

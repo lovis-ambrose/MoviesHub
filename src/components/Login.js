@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { account } from './Appwrite';
 import { Link, useNavigate } from 'react-router-dom';
+import {showToast} from "./ToastService";
+
 
 const Login = () => {
     const navigate = useNavigate(); // Initialize the useNavigate hook for redirection
@@ -24,6 +26,7 @@ const Login = () => {
             // Login user with email and password
             const session = await account.createEmailPasswordSession(credentials.email, credentials.password);
             console.log('User logged in:', session);
+            showToast("login successful", "success");
 
             // Retrieve the redirect path from localStorage (if any)
             const redirectTo = localStorage.getItem("redirectAfterLogin") || '/';
@@ -32,7 +35,7 @@ const Login = () => {
             // Redirect user to the original page or home page
             navigate(redirectTo);
         } catch (error) {
-            console.error('Login error:', error);
+            showToast("error logging in. Check credentials and try again.", "error");
         }
     };
 
@@ -68,7 +71,8 @@ const Login = () => {
                         <p>Don't have an account?</p>
                         <Link to="/register" className="text-decoration-none">Register</Link>
                     </div>
-                    <div className='text-end'>
+                    <div className='d-flex flex-row justify-content-between mt-2 w-100'>
+                        <Link to="/" className="text-decoration-none">Continue as guest</Link>
                         <Link to="/forgot-password" className="text-decoration-none">Forgot password?</Link>
                     </div>
                 </form>

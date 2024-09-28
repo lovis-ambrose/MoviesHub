@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { account } from './Appwrite';
+import {showToast} from "./ToastService";
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('');
@@ -20,19 +21,18 @@ const ResetPassword = () => {
 
         // Check if passwords match
         if (password !== confirmPassword) {
-            setError('Passwords do not match');
+            showToast("Passwords do not match", "error");
             return;
         }
 
         try {
             // Complete the password reset process
             await account.updateRecovery(userId, secret, password, confirmPassword);
-            console.log('Password reset successfully');
-            // Optionally, redirect user to the login page
+            showToast("Password reset successful", "success");
+            //redirect user to the login page
             navigate('/login');
         } catch (error) {
-            console.error('Error resetting password:', error);
-            setError('Failed to reset password. Please try again.');
+            showToast("Failed to reset password. Please try again.", "error");
         }
     };
 

@@ -9,6 +9,7 @@ import Home from './components/Home';
 import MovieDetails from "./components/MovieDetails";
 import ResetPassword from "./components/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
+import {ToastContainer} from "react-toastify";
 
 
 function App() {
@@ -17,21 +18,22 @@ function App() {
   return (
     <>
       <Router>
-      <div className="App">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/movie/:imdbID" element={
-                    <ProtectedRoute>
-                        <MovieDetails />
-                    </ProtectedRoute>
-                } />
-          </Routes>
-      </div>
-  </Router>
+          <div className="App">
+              <ToastContainer />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/movie/:imdbID" element={
+                        <ProtectedRoute>
+                            <MovieDetails />
+                        </ProtectedRoute>
+                    } />
+              </Routes>
+          </div>
+      </Router>
     </>
     
   );

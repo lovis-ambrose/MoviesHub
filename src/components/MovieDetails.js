@@ -4,6 +4,7 @@ import MovieListHeading from "./MovieListHeading";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSignIn, faSignOut} from "@fortawesome/free-solid-svg-icons";
 import {account} from "./Appwrite";
+import {showToast} from "./ToastService";
 
 const MovieDetails = () => {
     const { imdbID } = useParams();
@@ -24,7 +25,7 @@ const MovieDetails = () => {
                     setIsLoggedIn(true);
                 }
             } catch (error) {
-                console.log("user not found");
+                showToast("User not found", "error");
                 setIsLoggedIn(false);
             }
         };
@@ -39,7 +40,7 @@ const MovieDetails = () => {
                 const data = await response.json();
                 setMovieDetails(data);
             } catch (error) {
-                console.error("Error fetching movie details:", error);
+                showToast("Error fetching movie details", "error");
             }
         };
 
@@ -58,7 +59,7 @@ const MovieDetails = () => {
             setIsLoggedIn(false);
             handleNavigation('/login'); // Redirect to login page
         } catch (error) {
-            console.error('Logout failed:', error);
+            showToast("Logout failed", "error");
         }
     };
 

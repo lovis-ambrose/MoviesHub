@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {account} from "./Appwrite";
+import {showToast} from "./ToastService";
 
 const MovieList = (props) => {
     const FavoriteMovieComponent = props.favoriteMovieComponent;
@@ -24,7 +25,6 @@ const MovieList = (props) => {
                     else setIsAdmin(false);
                 }
             } catch (error) {
-                console.log("User not found, not logged in");
                 setIsLoggedIn(false);
             }
         };

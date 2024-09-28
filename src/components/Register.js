@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { account, databases, ID } from "./Appwrite";
 import {Link, useNavigate} from "react-router-dom";
+import {showToast} from "./ToastService";
 
 const Register = () => {
     const handleNavigation = useNavigate();
@@ -21,19 +22,6 @@ const Register = () => {
             [name]: value,
         }));
     };
-
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         // Create user with email and password
-    //         const response = await account.create(ID.unique(), user.email, user.password, user.fullName);
-    //         console.log('User registered:', response);
-    //         // Redirect user to login or some other page
-    //     } catch (error) {
-    //         console.error('Registration error:', error);
-    //     }
-    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -58,9 +46,9 @@ const Register = () => {
     
             // Redirect to login page
             handleNavigation("/");
-            console.log('User registered and logged in, membership created');
+            showToast("User registered and logged in, membership created", "success");
         } catch (error) {
-            console.error('Registration error:', error);
+            showToast("Registration error", "error");
         }
     };
     

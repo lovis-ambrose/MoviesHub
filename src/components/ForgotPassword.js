@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { account } from './Appwrite';
+import {Link} from "react-router-dom";
+import {showToast} from "./ToastService";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -14,10 +16,10 @@ const ForgotPassword = () => {
         try {
             // Send password recovery email
             await account.createRecovery(email, resetUrl);
-            console.log('Password recovery email sent');
+            showToast("Password recovery email sent. Check your email to reset password", "success");
             // Optionally show success message to the user
         } catch (error) {
-            console.error('Error in password recovery:', error);
+            showToast("Error in password recovery", "error");
         }
     };
 
@@ -37,6 +39,9 @@ const ForgotPassword = () => {
                         />
                     </div>
                     <button type="submit" class="btn btn-primary mt-2 w-100">Send Recovery Email</button>
+                    <div className="text-end mt-2">
+                        <Link to="/login" className="text-decoration-none">Back to Login</Link>
+                    </div>
                 </form>
             </div>
         </div>
