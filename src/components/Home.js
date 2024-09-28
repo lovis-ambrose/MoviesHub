@@ -3,11 +3,11 @@ import { account, databases } from "./Appwrite";
 import MovieList from './MovieList';
 import MovieListHeading from './MovieListHeading';
 import SearchMovie from './SearchField';
-import AddFavorite from './AddFavorite';
-import RemoveFavorites from './RemoveFavorite';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOut, faSignIn } from "@fortawesome/free-solid-svg-icons";
+import RemoveFavorites from "./RemoveFavorite";
+import AddFavorite from "./AddFavorite";
 
 const Home = () => {
     const [movies, setMovies] = useState([]);

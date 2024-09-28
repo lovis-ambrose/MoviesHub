@@ -39,9 +39,9 @@ const MovieList = (props) => {
                          onClick={() => handleMovieClick(movie.imdbID)}/>
                     <div className="overlay d-flex align-items-center justify-content-center row">
                         <h3>{movie.Title}</h3>
-                        {isLoggedIn && isAdmin && (
+                        {isLoggedIn && isAdmin && FavoriteMovieComponent && (
                             <div onClick={() => props.handleFavoritesClick(movie)} className="pointer">
-                                <FavoriteMovieComponent/>
+                                <FavoriteMovieComponent />
                             </div>
                         )}
                     </div>
