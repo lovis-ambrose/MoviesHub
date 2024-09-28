@@ -14,6 +14,7 @@ const Home = () => {
     const [favorites, setFavorites] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false); // Add admin state
     const navigate = useNavigate();
 
     const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
@@ -29,15 +30,25 @@ const Home = () => {
         }
     }, [databaseId, movieCollectionId]);
 
-    // Check if user is logged in when component mounts
+    // Check if user is logged in and if they're an admin when the component mounts
     useEffect(() => {
         const checkUserSession = async () => {
             try {
                 const user = await account.get();
-                if (user.$id) setIsLoggedIn(true);
+                if (user.$id) {
+                    setIsLoggedIn(true);
+
+                    // Assuming user role is stored in `user.prefs.role` or some field
+                    if (user.prefs && user.prefs.role === 'admin') {
+                        setIsAdmin(true); // Set user as admin if the role is 'admin'
+                    } else {
+                        setIsAdmin(false);
+                    }
+                }
             } catch (error) {
                 console.log("User not found, not logged in");
                 setIsLoggedIn(false);
+                setIsAdmin(false);
             }
         };
         checkUserSession();
@@ -109,6 +120,7 @@ const Home = () => {
         try {
             await account.deleteSession('current');
             setIsLoggedIn(false);
+            setIsAdmin(false);
             navigate('/');  // logout but stay on home page
         } catch (error) {
             console.error('Logout failed:', error);
@@ -138,7 +150,11 @@ const Home = () => {
 
             {/* Movie Search Results with "Add to Favorites" */}
             <div className='d-flex flex-row' style={{ overflowY: 'auto' }}>
-                <MovieList movies={movies} handleFavoritesClick={addFavoriteMovie} favoriteMovieComponent={AddFavorite} />
+                <MovieList
+                    movies={movies}
+                    handleFavoritesClick={addFavoriteMovie}
+                    favoriteMovieComponent={isAdmin ? AddFavorite : null}  // Only show add button if user is admin
+                />
             </div>
 
             <div className='d-flex flex-row align-items-center mt-4 mb-4 sticky-top'>
@@ -147,7 +163,11 @@ const Home = () => {
 
             {/* Favorite Movies with "Remove from Favorites" */}
             <div className='d-flex flex-row' style={{ overflowY: 'auto' }}>
-                <MovieList movies={favorites} handleFavoritesClick={removeFavoriteMovie} favoriteMovieComponent={RemoveFavorites} />
+                <MovieList
+                    movies={favorites}
+                    handleFavoritesClick={removeFavoriteMovie}
+                    favoriteMovieComponent={isAdmin ? RemoveFavorites : null}  // Only show remove button if user is admin
+                />
             </div>
         </div>
     );
