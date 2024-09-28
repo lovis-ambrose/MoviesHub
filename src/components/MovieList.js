@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {account} from "./Appwrite";
-import {showToast} from "./ToastService";
 
 const MovieList = (props) => {
     const FavoriteMovieComponent = props.favoriteMovieComponent;

@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { account } from './Appwrite';
 import {showToast} from "./ToastService";
+import {ScaleLoader} from "react-spinners";
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const location = useLocation();
@@ -18,8 +19,6 @@ const ResetPassword = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Check if passwords match
         if (password !== confirmPassword) {
             showToast("Passwords do not match", "error");
             return;
@@ -27,12 +26,16 @@ const ResetPassword = () => {
 
         try {
             // Complete the password reset process
+            setLoading(true);
             await account.updateRecovery(userId, secret, password, confirmPassword);
             showToast("Password reset successful", "success");
             //redirect user to the login page
             navigate('/login');
-        } catch (error) {
+        } catch  {
             showToast("Failed to reset password. Please try again.", "error");
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -61,8 +64,13 @@ const ResetPassword = () => {
                             className="form-control text-start"
                         />
                     </div>
-                    {error && <div className="alert alert-danger mt-2">{error}</div>}
-                    <button type="submit" className="btn btn-primary mt-2 w-100">Reset Password</button>
+                    <button type="submit" className="btn btn-primary mt-2 w-100" disabled={loading}>
+                        {loading ? (
+                            <ScaleLoader color="#ffffff" height={20} />
+                        ) : (
+                            "Reset Password"
+                        )}
+                    </button>
                 </form>
             </div>
         </div>

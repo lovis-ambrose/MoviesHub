@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { account, databases, ID } from "./Appwrite";
 import {Link, useNavigate} from "react-router-dom";
 import {showToast} from "./ToastService";
+import {ScaleLoader} from "react-spinners";
 
 const Register = () => {
     const handleNavigation = useNavigate();
+    const [loading, setLoading] = useState(false);
     const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
     const userCollectionId = process.env.REACT_APP_USER_COLLECTION_ID;
 
@@ -26,6 +28,7 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setLoading(true);
             // Create user
             const response = await account.create(ID.unique(), user.email, user.password, user.fullName);
             
@@ -49,6 +52,9 @@ const Register = () => {
             showToast("User registered and logged in, membership created", "success");
         } catch (error) {
             showToast("Registration error", "error");
+        }
+        finally {
+            setLoading(false);
         }
     };
     
@@ -93,7 +99,13 @@ const Register = () => {
                             className="form-control"
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary mt-2 w-100">Register</button>
+                    <button type="submit" className="btn btn-primary mt-2 w-100" disabled={loading}>
+                        {loading ? (
+                            <ScaleLoader color="#ffffff" height={20} />
+                        ) : (
+                            "Register"
+                        )}
+                    </button>
                     <div className="d-flex flex-row justify-content-between mt-2 w-100">
                         <p>Already have an account?</p>
                         <Link to="/login" className="text-decoration-none">Login</Link>

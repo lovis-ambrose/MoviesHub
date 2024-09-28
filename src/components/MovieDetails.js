@@ -5,11 +5,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSignIn, faSignOut} from "@fortawesome/free-solid-svg-icons";
 import {account} from "./Appwrite";
 import {showToast} from "./ToastService";
+import {LoaderBounce} from "./Loader";
 
 const MovieDetails = () => {
     const { imdbID } = useParams();
     const [movieDetails, setMovieDetails] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [loading, setLoading] = useState(true);
     const handleNavigation = useNavigate();
     const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
     const movieCollectionId = process.env.REACT_APP_MOVIE_COLLECTION_ID;
@@ -36,21 +38,19 @@ const MovieDetails = () => {
     useEffect(() => {
         const fetchMovieDetails = async () => {
             try {
+                setLoading(true);
                 const response = await fetch(`${apiUrl}?i=${imdbID}&apikey=${apiKey}`);
                 const data = await response.json();
                 setMovieDetails(data);
             } catch (error) {
                 showToast("Error fetching movie details", "error");
             }
+            finally {
+                setLoading(false);
+            }
         };
-
         fetchMovieDetails();
     }, [imdbID, apiKey, apiUrl, databaseId, movieCollectionId]);
-
-
-    if (!movieDetails) {
-        return <div>Loading...</div>;
-    }
 
     // Handle logout functionality
     const handleLogout = async () => {
@@ -67,6 +67,14 @@ const MovieDetails = () => {
     const handleLoginRedirect = () => {
         handleNavigation('/login'); // Redirect to the login page
     };
+
+    if (loading) {
+        return <LoaderBounce />; // Show loader while data is being fetched
+    }
+
+    if (!movieDetails) {
+        return <div>No movie details found.</div>
+    }
 
     return (
         <div>

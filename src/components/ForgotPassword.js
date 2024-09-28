@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { account } from './Appwrite';
 import {Link} from "react-router-dom";
 import {showToast} from "./ToastService";
+import {ScaleLoader} from "react-spinners";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
-    const resetUrl = process.env.REACT_APP_PASSWORD_RESET_URL;
+    const [loading, setLoading] = useState(false);
+    const resetUrl = process.env.REACT_APP_PASSWORD_RESET_URL_HOSTED;
 
     const handleChange = (e) => {
         setEmail(e.target.value);
@@ -14,12 +16,14 @@ const ForgotPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Send password recovery email
+            setLoading(true);
             await account.createRecovery(email, resetUrl);
             showToast("Password recovery email sent. Check your email to reset password", "success");
-            // Optionally show success message to the user
         } catch (error) {
             showToast("Error in password recovery", "error");
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -38,7 +42,14 @@ const ForgotPassword = () => {
                             class="form-control text-start"
                         />
                     </div>
-                    <button type="submit" class="btn btn-primary mt-2 w-100">Send Recovery Email</button>
+                    <button type="submit" class="btn btn-primary mt-2 w-100" disabled={loading}>
+                        {loading ? (
+                            <ScaleLoader color="#ffffff" height={20} />
+                        ) : (
+                            "Send Recovery Email"
+                        )}
+                    </button>
+
                     <div className="text-end mt-2">
                         <Link to="/login" className="text-decoration-none">Back to Login</Link>
                     </div>

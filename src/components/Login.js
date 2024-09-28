@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { account } from './Appwrite';
 import { Link, useNavigate } from 'react-router-dom';
 import {showToast} from "./ToastService";
+import {ScaleLoader} from "react-spinners";
 
 
 const Login = () => {
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate(); // Initialize the useNavigate hook for redirection
 
     const [credentials, setCredentials] = useState({
@@ -24,6 +26,7 @@ const Login = () => {
         e.preventDefault();
         try {
             // Login user with email and password
+            setLoading(true);
             const session = await account.createEmailPasswordSession(credentials.email, credentials.password);
             console.log('User logged in:', session);
             showToast("login successful", "success");
@@ -36,6 +39,9 @@ const Login = () => {
             navigate(redirectTo);
         } catch (error) {
             showToast("error logging in. Check credentials and try again.", "error");
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -66,7 +72,13 @@ const Login = () => {
                             className="form-control"
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary mt-2 w-100">Login</button>
+                    <button type="submit" className="btn btn-primary mt-2 w-100" disabled={loading}>
+                        {loading ? (
+                            <ScaleLoader color="#ffffff" height={20} />
+                        ) : (
+                            "Login"
+                        )}
+                    </button>
                     <div className="d-flex flex-row justify-content-between mt-2 w-100">
                         <p>Don't have an account?</p>
                         <Link to="/register" className="text-decoration-none">Register</Link>
