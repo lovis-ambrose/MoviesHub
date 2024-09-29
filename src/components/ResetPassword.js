@@ -40,8 +40,8 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100">
-            <div className="text-start border rounded p-3 w-25">
+        <div className="container d-flex justify-content-center align-items-center vh-100">
+            <div className="text-start border rounded p-3 w-100 w-md-75 custom-width-lg-45">
                 <h2 className='text-center'>Reset Password</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -64,9 +64,9 @@ const ResetPassword = () => {
                             className="form-control text-start"
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary mt-2 w-100" disabled={loading}>
+                    <button type="submit" className="btn btn-primary mt-3 w-100" disabled={loading}>
                         {loading ? (
-                            <ScaleLoader color="#ffffff" height={20} />
+                            <ScaleLoader color="#ffffff" height={20}/>
                         ) : (
                             "Reset Password"
                         )}

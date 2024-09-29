@@ -46,8 +46,8 @@ const Login = () => {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100">
-            <div className="text-start border rounded p-3 w-25">
+        <div className="container d-flex justify-content-center align-items-center vh-100">
+            <div className="text-start border rounded p-3 w-100 w-md-75 custom-width-lg-45">
                 <h2 className='text-center'>Login</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group mt-2">

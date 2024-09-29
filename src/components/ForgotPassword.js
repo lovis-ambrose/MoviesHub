@@ -7,7 +7,8 @@ import {ScaleLoader} from "react-spinners";
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
-    const resetUrl = process.env.REACT_APP_PASSWORD_RESET_URL_HOSTED;
+    const resetUrl = process.env.REACT_APP_PASSWORD_RESET_URL;
+    // const resetUrlHosted = process.env.REACT_APP_PASSWORD_RESET_URL_HOSTED;
 
     const handleChange = (e) => {
         setEmail(e.target.value);
@@ -28,8 +29,8 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div class="d-flex justify-content-center align-items-center vh-100">
-            <div class="text-start border rounded p-3 w-25">
+        <div class="container d-flex justify-content-center align-items-center vh-100">
+            <div class="text-start border rounded p-3 w-100 w-md-75 custom-width-lg-45">
                 <h2 className='text-center'>Forgot Password</h2>
                 <form onSubmit={handleSubmit}>
                     <div class="form-group">
