@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { account, databases, ID } from "./Appwrite";
 import {Link, useNavigate} from "react-router-dom";
 import {showToast} from "./ToastService";
@@ -31,32 +31,66 @@ const Register = () => {
             setLoading(true);
             // Create user
             const response = await account.create(ID.unique(), user.email, user.password, user.fullName);
-            
+
             // Log the user in after registration
             await account.createEmailPasswordSession(user.email, user.password);
-    
-            // Add membership details to the database
+
+            // Set membership start and end times (2 minutes for testing)
             const membershipStart = new Date().toISOString();
-            const membershipEnd = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour later
-    
+            const membershipEnd = new Date(Date.now() + 2 * 60 * 1000).toISOString(); // 2 minutes later
+
+            // Add membership details to the database
             await databases.createDocument(databaseId, userCollectionId, response.$id, {
                 fullName: user.fullName,
                 email: user.email,
                 password: user.password,
                 membershipStart,
                 membershipEnd,
+                isSubscribed: true // Initially set as subscribed
             });
-    
-            // Redirect to login page
+
+            // Redirect to home page
             handleNavigation("/");
             showToast("User registered and logged in, membership created", "success");
         } catch (error) {
             showToast("Registration error", "error");
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     };
+
+    // Function to periodically check subscription status
+    const checkSubscriptionStatus = async () => {
+        try {
+            // Get the current user
+            const user = await account.get();
+            if (user.$id) {
+                const userId = user.$id;
+
+                // Fetch the user's membership details from the database
+                const userDocument = await databases.getDocument(databaseId, userCollectionId, userId);
+                const { membershipEnd } = userDocument;
+
+                // Check if the membership has expired
+                const currentTime = new Date().toISOString();
+                if (currentTime >= membershipEnd) {
+                    // Update subscription status to false
+                    await databases.updateDocument(databaseId, userCollectionId, userId, {
+                        isSubscribed: false,
+                    });
+                    showToast("Membership has expired", "warning");
+                }
+            }
+        } catch (error) {
+            // showToast("Error checking subscription status", "error");
+        }
+    };
+
+    // Call checkSubscriptionStatus every 30 seconds
+    useEffect(() => {
+        const interval = setInterval(checkSubscriptionStatus, 10000);
+        return () => clearInterval(interval);
+    }, []);
     
     
 

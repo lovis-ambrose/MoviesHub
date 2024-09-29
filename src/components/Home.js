@@ -5,7 +5,7 @@ import MovieListHeading from './MovieListHeading';
 import SearchMovie from './SearchField';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignOut, faSignIn } from "@fortawesome/free-solid-svg-icons";
+import { faSignOut, faSignIn, faBell, faBellSlash } from "@fortawesome/free-solid-svg-icons";
 import RemoveFavorites from "./RemoveFavorite";
 import AddFavorite from "./AddFavorite";
 import {showToast} from "./ToastService";
@@ -16,10 +16,12 @@ const Home = () => {
     const [searchValue, setSearchValue] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false); // Add admin state
+    const [isSubscribed, setIsSubscribed] = useState(false);
     const navigate = useNavigate();
 
     const databaseId = process.env.REACT_APP_MOVIES_DATABASE_ID;
     const movieCollectionId = process.env.REACT_APP_MOVIE_COLLECTION_ID;
+    const userCollectionId = process.env.REACT_APP_USER_COLLECTION_ID;
 
     // Fetch movies from Appwrite database
     const fetchMoviesFromDatabase = useCallback(async () => {
@@ -38,17 +40,13 @@ const Home = () => {
                 const user = await account.get();
                 if (user.$id) {
                     setIsLoggedIn(true);
-
-                    // Assuming user role is stored in `user.prefs.role` or some field
-                    if (user.prefs && user.prefs.role === 'admin') {
-                        setIsAdmin(true); // Set user as admin if the role is 'admin'
-                    } else {
-                        setIsAdmin(false);
-                    }
+                    setIsAdmin(user.prefs?.role === 'admin');
+                    setIsSubscribed(user.prefs?.isSubscribed || false);
                 }
             } catch (error) {
                 setIsLoggedIn(false);
                 setIsAdmin(false);
+                setIsSubscribed(false);
             }
         };
         checkUserSession();
@@ -115,6 +113,49 @@ const Home = () => {
         }
     };
 
+    // Handle subscription status
+    const handleSubscriptionToggle = async () => {
+        try {
+            const updatedSubscription = !isSubscribed;
+            await account.updatePrefs({ isSubscribed: updatedSubscription });
+            setIsSubscribed(updatedSubscription);
+            showToast(`Successfully ${updatedSubscription ? 'subscribed' : 'unsubscribed'}`, "success");
+        } catch (error) {
+            showToast("An error occurred. Subscription status not updated.", "error");
+        }
+    };
+
+    // periodically fetch the user's subscription status from the database and update the state
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            if (isLoggedIn) {
+                try {
+                    const user = await account.get();
+                    if (user.$id) {
+                        const userDocument = await databases.getDocument(databaseId, userCollectionId, user.$id);
+                        const { membershipEnd, isSubscribed } = userDocument;
+
+                        const currentTime = new Date().toISOString();
+                        if (currentTime >= membershipEnd && isSubscribed) {
+                            // Update subscription status to false in the database if it has expired
+                            await databases.updateDocument(databaseId, userCollectionId, user.$id, {
+                                isSubscribed: false,
+                            });
+                            setIsSubscribed(false); // Update local state
+                            showToast("Membership has expired", "warning");
+                        } else {
+                            setIsSubscribed(isSubscribed); // Keep the state in sync
+                        }
+                    }
+                } catch (error) {
+                    // showToast("Error checking subscription status", "error");
+                }
+            }
+        }, 10000); // Check every 10 seconds
+
+        return () => clearInterval(interval);
+    }, [isLoggedIn, databaseId, userCollectionId]);
+
     // Handle user logout
     const handleLogout = async () => {
         try {
@@ -138,6 +179,13 @@ const Home = () => {
             <div className="d-flex justify-content-between align-items-center mt-4 mb-4 sticky-top">
                 <MovieListHeading heading="Movies" />
                 <SearchMovie searchValue={searchValue} setSearchValue={setSearchValue} />
+
+                {isLoggedIn && (
+                    <button className="btn btn-link" onClick={handleSubscriptionToggle} title={isSubscribed ? "Unsubscribe" : "Subscribe"}>
+                        <FontAwesomeIcon icon={isSubscribed ? faBell : faBellSlash} size="2x" />
+                    </button>
+                )}
+
                 {isLoggedIn ? (
                     <button className="btn btn-link" onClick={handleLogout} title="Logout">
                         <FontAwesomeIcon icon={faSignOut} size="2x" />
